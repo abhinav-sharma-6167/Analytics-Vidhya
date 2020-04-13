@@ -194,7 +194,10 @@ param <- list(max_depth = 8,
 )
 set.seed(123)
 start_time <- Sys.time()
+
+#Bayesian Optimized tuned Hyperparameter
 model_xgb3 <- xgb.train(param, train.xg, nthread = 16, nround = 1600,verbose = 1)
+
 end_time <- Sys.time()
 time_taken <- end_time - start_time
 
