@@ -331,48 +331,6 @@ train[,matchingIndex :=NULL]
 
 train[is.na(Min_Ambient_Pollution),Min_Ambient_Pollution:=mean1]
 # 
-# 
-# 
-# 
-# 
-# 
-# 
-# train$Average_Moisture_In_Park[is.na(train$Average_Moisture_In_Park)] <- mean(train$Average_Moisture_In_Park)
-# train$pol2[is.na(train$pol2)] <- mean(train$pol2)
-# train$yday[is.na(train$yday)] <- mean(train$yday)
-# 
-# train$Max_Moisture_In_Park[is.na(train$Max_Moisture_In_Park)] <- mean(train$Max_Moisture_In_Park)
-# 
-# 
-# 
-# train[is.na(train)] <- 1
-# 
-# 
-# 
-# 
-
-
-
-
-
-
-
-
-
-
-
-#test$Var2 <- test$Var1
-
-
-
-
-
-
-
-
-
-
-
 
 mon_avgdist <- train[!is.na(Var1),lapply(.SD,mean),by=c("Min_Moisture_In_Park"),
                      .SDcols=c("Var1")]
@@ -384,233 +342,26 @@ test[is.na(Var1),Var1:=mon_avgdist$Var1[test$matchingIndex[is.na(test$Var1)]]]
 test[,matchingIndex :=NULL]
 
 
-
-
-
-
-
-
 mon_avgdist <- train[!is.na(Average_Breeze_Speed),lapply(.SD,mean),by=c("Min_Moisture_In_Park"),
                      .SDcols=c("Average_Breeze_Speed")]
 # park_avgdist <- train[!is.na(Var1),lapply(.SD,mean),by=c("Park_ID"),
 #                                     .SDcols=c("Var1")]
+#Feature Engineering
 test[,matchingIndex:=match(test$Min_Moisture_In_Park,mon_avgdist$Min_Moisture_In_Park)]
 test[is.na(Average_Breeze_Speed),Average_Breeze_Speed:=mon_avgdist$Average_Breeze_Speed[test$matchingIndex[is.na(test$Average_Breeze_Speed)]]]
 
 test[,matchingIndex :=NULL]
 
 
-# 
-# 
-# 
-# 
-# 
-# 
-# target <-train$Footfall
-# train[,Footfall :=NULL]
-# 
-# 
-# #Neural Net
-# 
-# library(neuralnet)
-# train <-train[,colnames(train)[-c(2:4,5,6,7,9,11:14,16,17,21,24,25,26)]:= NULL,with=F]
-# test <-test[,colnames(test)[-c(2:4,5,6,7,9,11:14,16,17,21,24,25,26)]:= NULL,with=F]
-# train$Footfall <- target
-# 
-# 
-# set.seed(123)
-# 
-# start_time <- Sys.time()
-# train[is.na(train)] <- 1
-# train<-as.data.frame(train)
-# 
-# model_net <- neuralnet(formula = Footfall~Var1+new+pol2,data = train)
-# 
-# 
-# end_time <- Sys.time()
-# time_taken <- end_time - start_time
-# 
-
-
-
-
-
-
-
-
-
-#Random Forest
-# 
-
-# 
-# 
-# train[,ID:=NULL]
-# train$Direction_Of_Wind <- as.integer(train$Direction_Of_Wind/7)
-# train$Average_Breeze_Speed <- as.integer(train$Average_Breeze_Speed/3)
-# train$Var1 <- as.integer(train$Var1/6)
-# train$Max_Breeze_Speed <- as.integer(train$Max_Breeze_Speed)
-# train$Min_Breeze_Speed <- as.integer(train$Min_Breeze_Speed)
-# 
-# 
-# train$Average_Atmospheric_Pressure <- as.integer(train$Average_Atmospheric_Pressure/12)
-# train$Max_Atmospheric_Pressure <- as.integer(train$Max_Atmospheric_Pressure/12) 
-# train$Min_Atmospheric_Pressure <- as.integer(train$Min_Atmospheric_Pressure/13)
-# 
-# train$Min_Ambient_Pollution <- as.integer(train$Min_Ambient_Pollution/10)
-# train$Max_Ambient_Pollution <- as.integer(train$Min_Ambient_Pollution/1.2)
-# 
-# train$Max_Moisture_In_Park <- as.integer(train$Max_Moisture_In_Park/1.1)
-# 
-# 
-# train$pol <- as.integer(train$pol)
-# train$pol2 <- as.integer(100*train$pol2)
-# train$new <- as.integer(8*train$new)
-# train$pol3 <- as.integer(train$pol3/10)
-# 
-# 
-# 
-# 
-# 
-# a<-test$ID
-# 
-# test[,ID:=NULL]
-# test$Direction_Of_Wind <- as.integer(test$Direction_Of_Wind/7)
-# test$Average_Breeze_Speed <- as.integer(test$Average_Breeze_Speed/3)
-# test$Var1 <- as.integer(test$Var1/6)
-# test$Max_Breeze_Speed <- as.integer(test$Max_Breeze_Speed)
-# test$Min_Breeze_Speed <- as.integer(test$Min_Breeze_Speed)
-# 
-# 
-# test$Average_Atmospheric_Pressure <- as.integer(test$Average_Atmospheric_Pressure/12)
-# test$Max_Atmospheric_Pressure <- as.integer(test$Max_Atmospheric_Pressure/12) 
-# test$Min_Atmospheric_Pressure <- as.integer(test$Min_Atmospheric_Pressure/13)
-# 
-# test$Min_Ambient_Pollution <- as.integer(test$Min_Ambient_Pollution/10)
-# test$Max_Ambient_Pollution <- as.integer(test$Min_Ambient_Pollution/1.2)
-# 
-# test$Max_Moisture_In_Park <- as.integer(test$Max_Moisture_In_Park/1.1)
-# 
-# 
-# test$pol <- as.integer(test$pol)
-# test$pol2 <- as.integer(100*test$pol2)
-# test$new <- as.integer(8*test$new)
-# test$pol3 <- as.integer(test$pol3/10)
-# 
-# library("randomForest")
-# 
-# 
-# 
-# 
-# 
-# target <- train$Footfall
-# train[,Footfall:=NULL]
-# 
-# train <-train[,colnames(train)[-c(1:13,16:18,20,23:25)]:= NULL,with=F]
-# 
-# 
-# 
-# test <-test[,colnames(test)[-c(1:13,16:18,20,23:25)]:= NULL,with=F]
-# 
-# #c(2:4,5,6,7,9,11:14,16,17,21,24,25,26)  -1
-# 
-# 
-# train$Footfall <- target
-# train11 <- na.omit(train)
-# model_rf <- randomForest(Footfall ~  Park_ID + Direction_Of_Wind + Average_Breeze_Speed + Max_Breeze_Speed + Min_Breeze_Speed + Var1 + Average_Atmospheric_Pressure 
-#                          + Max_Ambient_Pollution + Average_Moisture_In_Park +
-#                            Max_Moisture_In_Park +  mon + mday + new + pol2 + pol3 , data=train11, ntree=1600, mtry=4, importance=TRUE)
-# 
-# 
-# test<-as.matrix(as.data.frame(test))
-# pred <- predict(model_rf,test)
-# ans<-as.data.table(test$ID)
-# ans$ID <- ans$V1
-# ans[,V1:=NULL]
-# ans$Footfall <- as.integer(pred)
-# 
-# 
-# write.csv(ans,"rfans.csv",row.names = FALSE)
-# 
-# #xgboost model
-
-
-
-
-
 
 train$f4 <- train$f1*train$f2*train$f3
-
-
 
 train$f4[train$f4 < 7] <- NA
 train$f4[train$f4 > 24.1] <- NA
 
 
 
-
-
-
 train[,Footfall :=NULL]
 # train[is.na(train)] <- 0
 # test[is.na(test)] <- 0
-
-train <-train[,colnames(train)[-c(2:4,5,6,7,9,11:14,16,17,21,24,25,26,30)]:= NULL,with=F]
-
-train_mat = data.matrix(as.data.frame(train))
-
-train.xg = xgb.DMatrix(train_mat, label=target, missing=NA)
-
-
-
-
-param <- list(max_depth = 10,
-              eta = 0.015,
-              silent = 0,
-              objective="reg:linear",
-              eval_metric="rmse",
-              # subsample = 0.75,
-              min_child_weight = 800,
-              colsample_bytree = 1,
-              base_score =0
-)
-
-
-
-start_time <- Sys.time()
-
-set.seed(123)
-model_xgb2 <- xgb.train(param, train.xg, nthread = 16, nround = 1600, verbose = 1)
-
-end_time <- Sys.time()
-time_taken <- end_time - start_time
-
-test <-test[,colnames(test)[-c(2:4,5,6,7,9,11:14,16,17,21,24,25,26,30)]:= NULL,with=F]
-
-test_mat = data.matrix(as.data.frame(test))
-#test.xg = xgb.DMatrix(test, missing=NA)
-
-
-
-
-prediction<-predict(model_xgb2,test_mat, missing=NA)
-test$Footfall <- prediction
-test <- fread("test.csv")
-
-ml_ans <- as.data.table(test$ID)
-ml_ans$ID <- ml_ans$V1
-ml_ans[,V1:=NULL]
-ml_ans$Footfall <- prediction
-
-
-write.csv(ml_ans,"highgh.csv",row.names = FALSE)
-
-ml_ans$Footfall<- ml_ans$Footfall - 11.5
-
-write.csv(ml_ans,"highgher.csv",row.names = FALSE)
-
-
-
-
-#feature 0010 11.5
-
 
