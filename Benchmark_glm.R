@@ -22,27 +22,27 @@ first <- attended_health_camp_1[,.(Health_Camp_ID,Patient_ID,Target)]
 attended_health_camp_2 <- attended_health_camp_2[,.(Health_Camp_ID,Patient_ID,Target)]
 attended_health_camp_3 <- attended_health_camp_3[,.(Health_Camp_ID,Patient_ID,Target)]
 
-
+
 
 attended_all <- rbindlist(list(attended_health_camp_1,attended_health_camp_2,attended_health_camp_3))
 
-
+
 
 train <- attended_all[train,on=c("Health_Camp_ID","Patient_ID")]
 
 train$Target[is.na(train$Target)] <- 0
 
-
+
 
 #check count of 1 and 0
 
 table(train$Target) #train data ready
 
-
+
 
 # Set Date class ---------------------------------------------------------------
 
-
+
 
 index <- c(11,14,15,19)
 
@@ -52,17 +52,9 @@ index <- c(9,13,14,18)
 
 test[,(index) := lapply(.SD, function(x) as.Date(x,format="%d-%b-%y")),.SDcols = index]
 
-
-
-# write.csv(train,"trainf.csv",row.names = F)
-
-# write.csv(test,"testf.csv",row.names = F)
-
-
 
 #Simple Features + Modeling
 
-
 
 #Test Age
 
@@ -72,7 +64,6 @@ sort(unique(test$Age),decreasing = T)
 
 sort(unique(train$Age),decreasing = T)
 
-
 
 #creating variables
 
@@ -80,13 +71,11 @@ train[,Camp_Duration := Camp_End_Date - Camp_Start_Date]
 
 train[,Camp_Duration := as.numeric(as.character(Camp_Duration))]
 
-
 
 test[,Camp_Duration := Camp_End_Date - Camp_Start_Date]
 
 test[,Camp_Duration := as.numeric(as.character(Camp_Duration))]
 
-
 
 train[,c("Camp_Start_Date","Camp_End_Date") := NULL]
 
@@ -98,19 +87,17 @@ train[,Patient_Response := Registration_Date - First_Interaction]
 
 train[,Patient_Response := as.numeric(as.character(Patient_Response))]
 
-
 
 test[,Patient_Response := Registration_Date - First_Interaction]
 
 test[,Patient_Response := as.numeric(as.character(Patient_Response))]
 
-
+
 
 train[,c("Registration_Date","First_Interaction") := NULL]
 
 test[,c("Registration_Date","First_Interaction") := NULL]
 
-
 
 #removing ID variables
 
@@ -120,7 +107,7 @@ test_ID <- test[,.(Patient_ID,Health_Camp_ID)]
 
 test <- test[,-c("Patient_ID","Health_Camp_ID"),with=FALSE]
 
-
+
 
 #logistic regression
 
@@ -128,10 +115,8 @@ log_model <- glm(Target ~ ., data=train, family = binomial(link="logit"))
 
 predict <- predict(log_model,newdata = test,type = "response")
 
-
 
 submission <- data.table(Patient_ID = test_ID$Patient_ID, Health_Camp_ID = test_ID$Health_Camp_ID, Outcome = predict)
 
 write.csv(submission,"R_Benchmark.csv",row.names = F) #Public Score - 0.78
 
-
